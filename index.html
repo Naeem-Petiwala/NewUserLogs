@@ -3,133 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Native Log</title>
-    <link rel="stylesheet" href="style.css">
+    <title>User Logs</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="header">
-        <div class="logo">phu</div>
-        <div class="admin">
-            <div class="admin-icon">A</div>
-            <span>Admin</span>
-        </div>
-    </div>
-
-    <div class="main-content">
-        <div class="form-container">
-            <h2 class="form-title">Native Log</h2>
-            <p class="form-subtitle">Search and analyze log entries with advanced filtering</p>
+    <div class="container">
+        <div class="form-card">
+            <header>
+                <h1>Native Log</h1>
+                <p class="subtitle">Search and analyze log entries with advanced filtering</p>
+            </header>
             
-            <form id="nativeLogForm">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label class="form-label">
-                            Client ID <span class="required">*</span>
-                        </label>
-                        <input type="text" class="form-input" id="clientId" placeholder="Enter client ID" required>
-                        <div class="error-message" id="clientIdError">⚠️ Client ID is required</div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">
-                            Repcode <span class="required">*</span>
-                        </label>
-                        <input type="text" class="form-input" id="repcode" placeholder="Enter repcode" required>
-                        <div class="error-message" id="repcodeError">⚠️ Repcode is required</div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">
-                            Type <span class="required">*</span>
-                        </label>
-                        <div class="dropdown" id="typeDropdown">
-                            <button type="button" class="dropdown-button" id="typeButton" aria-haspopup="listbox" aria-expanded="false">
-                                <span id="typeButtonText">Select type</span>
-                                <svg class="dropdown-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                                </svg>
-                            </button>
-                            <div class="dropdown-menu" id="typeMenu" role="listbox">
-                                <div class="dropdown-option" data-value="web" role="option">🌐 Web</div>
-                                <div class="dropdown-option" data-value="mobile_cp2" role="option">📱 Mobile CP2</div>
-                                <div class="dropdown-option" data-value="mobile" role="option">📱 Mobile</div>
-                                <div class="dropdown-option" data-value="web_cp3" role="option">🌐 Web CP3</div>
-                            </div>
-                        </div>
-                        <div class="error-message" id="typeError">⚠️ Please select a type</div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">
-                            Date <span class="required">*</span>
-                        </label>
-                        <input type="date" class="form-input" id="date" required>
-                        <div class="error-message" id="dateError">⚠️ Date is required</div>
-                    </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="clientId">Client ID <span class="required">*</span></label>
+                    <input type="text" id="clientId" placeholder="Enter Client ID" class="form-input">
+                    <span class="error-message" id="clientIdError"></span>
                 </div>
                 
-                <div class="button-row">
-                    <button type="submit" class="show-button" id="showButton" disabled>
-                        <span id="buttonText">Show Logs</span>
-                        <div class="spinner" id="spinner" style="display: none;"></div>
-                    </button>
+                <div class="form-group">
+                    <label for="repCode">Repcode <span class="required">*</span></label>
+                    <input type="text" id="repCode" placeholder="Enter repcode" class="form-input">
+                    <span class="error-message" id="repCodeError"></span>
                 </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Enhanced Alert Modal -->
-    <div class="alert-overlay" id="alertOverlay" role="dialog" aria-modal="true" aria-labelledby="alertTitle">
-        <div class="alert-box">
-            <div class="alert-header">
-                <h3 class="alert-title" id="alertTitle">Log Results</h3>
-                <button class="alert-close" id="alertClose" aria-label="Close dialog">&times;</button>
+                
+                <div class="form-group">
+                    <label for="instance">Instance <span class="required">*</span></label>
+                    <select id="instance" class="form-select">
+                        <option value="">Select Instance</option>
+                        <option value="live">Live</option>
+                        <option value="local">Local</option>
+                    </select>
+                    <span class="error-message" id="instanceError"></span>
+                </div>
+                
+                <div class="form-group">
+                    <label for="type">Type <span class="required">*</span></label>
+                    <select id="type" class="form-select">
+                        <option value="">Select Type</option>
+                        <option value="web">Web</option>
+                        <option value="mobile_cp2">Mobile CP2</option>
+                        <option value="mobile_cp3">Mobile CP3</option>
+                    </select>
+                    <span class="error-message" id="typeError"></span>
+                </div>
             </div>
-            <div class="alert-content" id="alertContent">
-                <div class="controls-container">
-                    <div class="search-container">
-                        <input type="text" id="logSearchInput" class="form-input" placeholder="Search logs..." aria-label="Search log entries" />
-                        <button type="button" id="clearSearchButton" class="clear-search-button" style="display: none;" aria-label="Clear search">&times;</button>
-                    </div>
-                    <div class="filter-buttons" role="group" aria-label="Filter by log type">
-                        <button type="button" class="filter-button active" data-filter-type="all">All</button>
-                        <button type="button" class="filter-button" data-filter-type="info">Info</button>
-                        <button type="button" class="filter-button" data-filter-type="warning">Warning</button>
-                        <button type="button" class="filter-button" data-filter-type="error">Error</button>
-                    </div>
-                    <button type="button" class="clear-filters-button" id="clearAllFiltersButton">Clear Filters</button>
-                    
-                    <!-- New wrapper for export button and menu -->
-                    <div class="export-button-wrapper">
-                        <button type="button" class="export-button" id="exportLogsButton" aria-haspopup="true" aria-expanded="false">
-                            Export <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                                <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"/>
-                                <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"/>
-                            </svg>
-                        </button>
-                        <div class="export-options-menu" id="exportOptionsMenu">
-                            <button type="button" data-format="csv">CSV</button>
-                            <button type="button" data-format="json">JSON</button>
-                            <button type="button" data-format="txt">TXT (Messages)</button>
-                        </div>
-                    </div>
+            
+            <div class="form-group full-width">
+                <label for="date">Date <span class="required">*</span></label>
+                <input type="date" id="date" class="form-input date-input">
+                <span class="error-message" id="dateError"></span>
+            </div>
+            
+            <div class="button-container">
+                <button type="button" id="searchBtn" class="search-button">
+                    <span class="button-text">SHOW LOGS</span>
+                    <span class="loading-spinner" id="loadingSpinner"></span>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Custom Alert Modal -->
+        <div class="alert-overlay" id="alertOverlay">
+            <div class="alert-modal">
+                <div class="alert-icon error" id="alertIcon">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                        <line x1="15" y1="9" x2="9" y2="15" stroke="currentColor" stroke-width="2"/>
+                        <line x1="9" y1="9" x2="15" y2="15" stroke="currentColor" stroke-width="2"/>
+                    </svg>
                 </div>
-                <div id="logEntriesContainer">
-                    <!-- Log entries will be populated here -->
-                    <button id="scrollToTopButton" aria-label="Scroll to top">↑</button>
-                </div>
-                <div class="load-more-buttons-container">
-                    <button type="button" class="load-more-button" id="loadMoreButton" style="display: none;">
-                        Load More (Local) <div class="spinner" id="loadMoreLocalSpinner" style="display: none;"></div>
-                    </button>
-                    <button type="button" class="fetch-more-server-button" id="fetchMoreFromServerButton" style="display: none;">
-                        Fetch More from Server <div class="spinner" id="fetchMoreServerSpinner" style="display: none;"></div>
-                    </button>
-                </div>
+                <h3 class="alert-title" id="alertTitle">Error</h3>
+                <p class="alert-message" id="alertMessage">Something went wrong</p>
+                <button class="alert-button" id="alertButton">OK</button>
             </div>
         </div>
     </div>
-
+    
     <script src="script.js"></script>
 </body>
 </html>
